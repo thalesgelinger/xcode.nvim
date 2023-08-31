@@ -10,27 +10,30 @@ local function ruby(script)
     print(output)
 end
 
-M.add_class = function(file_name)
-    local t = require('xcode.template')
-    local h = string.format(t.h, file_name)
-    local m = string.format(t.m, file_name, file_name, file_name)
-    local dir = vim.fn.expand('%:h')
-    local m_file_path = dir .. "/" .. file_name .. ".m"
-    local h_file_path = dir .. "/" .. file_name .. ".h"
+M.add_class = function()
+    vim.ui.input({ prompt = 'Name for new component' }, function(input)
+        local file_name = input;
+        local t = require('xcode.template')
+        local h = string.format(t.h, file_name)
+        local m = string.format(t.m, file_name, file_name, file_name)
+        local dir = vim.fn.expand('%:h')
+        local m_file_path = dir .. "/" .. file_name .. ".m"
+        local h_file_path = dir .. "/" .. file_name .. ".h"
 
-    local m_file = io.open(m_file_path, 'w')
-    m_file:write(m)
-    m_file:close()
+        local m_file = io.open(m_file_path, 'w')
+        m_file:write(m)
+        m_file:close()
 
-    local h_file = io.open(h_file_path, 'w')
-    h_file:write(h)
-    h_file:close()
+        local h_file = io.open(h_file_path, 'w')
+        h_file:write(h)
+        h_file:close()
 
-    local s = require('xcode.scripts')
-    print(s.addFile)
-    print(m_file_path)
-    local addFileCmd = string.format(s.addFile, m_file_path)
-    ruby(addFileCmd)
+        local s = require('xcode.scripts')
+        print(s.addFile)
+        print(m_file_path)
+        local addFileCmd = string.format(s.addFile, m_file_path)
+        ruby(addFileCmd)
+    end)
 end
 
 
@@ -48,6 +51,7 @@ M.build = function()
 
 
     -- job:new({
+    
     --     command = "bash",
     --     args = { "/users/tgelin01/projects/xcode.nvim/lua/xcode/scripts/dev.sh" },
     --     cwd = vim.fn.getcwd(),
@@ -62,5 +66,18 @@ M.build = function()
     --     end,
     -- }):start()
 end
+
+M.setup = function()
+    vim.api.nvim_create_autocmd("BufWritePost", {
+        group = vim.api.nvim_create_augroup("XcodeDev", { clear = true }),
+        pattern = "*.m",
+        callback = function()
+            print("We saved it")
+
+            vim.cmd(scripts.run)
+        end
+    })
+end
+
 
 return M
