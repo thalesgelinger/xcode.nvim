@@ -1,7 +1,6 @@
 local M = {}
 
-local jobs = require("xcode.jobs")
-
+local jobs = require 'xcode.jobs'
 
 local function ruby(script)
     local command = "ruby -e " .. vim.fn.shellescape(script)

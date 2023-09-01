@@ -1,4 +1,8 @@
-local build = Job:new({
+local Job = require 'plenary.job'
+
+local M = {}
+
+M.build = Job:new({
     command = 'xcodebuild',
     args = {
         "-workspace",
@@ -28,7 +32,7 @@ local build = Job:new({
 })
 
 
-local kill_simulator = Job:new({
+M.kill_simulator = Job:new({
     command = 'xcrun',
     args = {
         "simctl",
@@ -53,7 +57,7 @@ local kill_simulator = Job:new({
 })
 
 
-local install_on_simulator = Job:new({
+M.install_on_simulator = Job:new({
     command = 'xcrun',
     args = {
         "simctl",
@@ -78,7 +82,7 @@ local install_on_simulator = Job:new({
 })
 
 
-local run_app = Job:new({
+M.run_app = Job:new({
     command = 'xcrun',
     args = {
         "simctl",
@@ -102,9 +106,4 @@ local run_app = Job:new({
     end
 })
 
-return {
-    build,
-    install_on_simulator,
-    run_app,
-    kill_simulator
-}
+return M
