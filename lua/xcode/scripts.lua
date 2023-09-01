@@ -1,15 +1,15 @@
 local M = {}
 
 M.build = [[
-!xcodebuild -workspace IosPokedexOld.xcworkspace -scheme IosPokedexOld CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max' build
+xcodebuild -workspace IosPokedexOld.xcworkspace -scheme IosPokedexOld CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -destination 'platform=iOS Simulator,name=iPhone 14 Pro Max' build
 ]]
 
 
 M.run = string.format([[
-!xcrun simctl terminate booted gelinger.IosPokedexOld &&
+xcrun simctl terminate booted gelinger.IosPokedexOld &&
 %s
-!xcrun simctl install booted ~/Library/Developer/Xcode/DerivedData/IosPokedexOld-apeihcrsmltruvbquztmxtetvvjt/Build/Products/Debug-iphonesimulator/IosPokedexOld.app
-!xcrun simctl launch booted gelinger.IosPokedexOld
+xcrun simctl install booted ~/Library/Developer/Xcode/DerivedData/IosPokedexOld-apeihcrsmltruvbquztmxtetvvjt/Build/Products/Debug-iphonesimulator/IosPokedexOld.app
+xcrun simctl launch booted gelinger.IosPokedexOld
 ]], M.build)
 
 M.dev = string.format("!find . -name '*.m' | !entr %s", M.run)

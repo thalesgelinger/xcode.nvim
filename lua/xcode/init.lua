@@ -1,7 +1,6 @@
--- local Job = require 'plenary.job'
-local scripts = require('xcode.scripts')
-
 local M = {}
+
+local jobs = require("xcode.jobs")
 
 
 local function ruby(script)
@@ -36,48 +35,46 @@ M.add_class = function()
     end)
 end
 
-
-M.dev = function()
-    vim.cmd(scripts.dev)
+local run = function()
+    jobs.kill_simulator:after(function()
+        jobs.build:after(function()
+            jobs.install_on_simulator:after(function()
+                jobs.run_app:start()
+            end)
+            jobs.install_on_simulator:start()
+        end)
+        jobs.build:start()
+    end)
+    jobs.kill_simulator:start()
 end
 
-M.run = function()
-    vim.cmd(scripts.run)
-end
+local runDev = false;
 
-M.build = function()
-    vim.cmd(scripts.build)
-
-
-
-    -- job:new({
-    
-    --     command = "bash",
-    --     args = { "/users/tgelin01/projects/xcode.nvim/lua/xcode/scripts/dev.sh" },
-    --     cwd = vim.fn.getcwd(),
-    --     -- env = { ['a'] = 'b' },
-    --     on_stdout = function(_, data)
-    --         -- handle standard output data here
-    --         print("standard output:", data)
-    --     end,
-    --     on_exit = function(j, return_val)
-    --         print(return_val)
-    --         print(j:result())
-    --     end,
-    -- }):start()
-end
-
-M.setup = function()
-    vim.api.nvim_create_autocmd("BufWritePost", {
-        group = vim.api.nvim_create_augroup("XcodeDev", { clear = true }),
-        pattern = "*.m",
-        callback = function()
-            print("We saved it")
-
-            vim.cmd(scripts.run)
+vim.api.nvim_create_autocmd("BufWritePost", {
+    group = vim.api.nvim_create_augroup("XcodeDev", { clear = true }),
+    pattern = "*.m",
+    callback = function()
+        if runDev then
+            print("Rebuilding")
+            run()
         end
-    })
-end
+    end
+})
+
+vim.api.nvim_create_user_command('XcodeDev', function()
+    runDev = not runDev;
+    if runDev then
+        print("Enable dev reload")
+        run()
+    else
+        print("Disable dev reload")
+    end
+end, {})
+
+vim.api.nvim_create_user_command('XcodeBuild', function()
+    jobs.build:start()
+end, {})
+
 
 
 return M
