@@ -2,12 +2,6 @@ local M = {}
 
 local jobs = require 'xcode.jobs'
 
-local function ruby(script)
-    local command = "ruby -e " .. vim.fn.shellescape(script)
-    local output = vim.fn.system(command)
-    print(output)
-end
-
 M.add_class = function()
     vim.ui.input({ prompt = 'Name for new component' }, function(input)
         local file_name = input;
@@ -26,11 +20,7 @@ M.add_class = function()
         h_file:write(h)
         h_file:close()
 
-        local s = require('xcode.scripts')
-        print(s.addFile)
-        print(m_file_path)
-        local addFileCmd = string.format(s.addFile, m_file_path)
-        ruby(addFileCmd)
+        jobs.ruby(m_file_path)
     end)
 end
 
@@ -50,7 +40,7 @@ end
 local runDev = false;
 
 vim.api.nvim_create_autocmd("BufWritePost", {
-    group = vim.api.nvim_create_augroup("XcodeDev", { clear = true }),
+    group = vim.api.nvim_create_augroup("Xcode", { clear = true }),
     pattern = "*.m",
     callback = function()
         if runDev then
