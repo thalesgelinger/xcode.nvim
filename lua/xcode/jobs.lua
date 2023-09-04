@@ -4,7 +4,8 @@ local M = {}
 
 
 M.ruby = function(file_name)
-    local ruby_script = "/Users/tgelin01/Projects/xcode.nvim/lua/xcode/scripts/add_file.rb"
+    local scripts = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
+    local ruby_script = scripts .. "add_file.rb"
 
     Job:new({
         command = 'ruby',
@@ -12,18 +13,11 @@ M.ruby = function(file_name)
             ruby_script,
             file_name
         },
-        on_stdout = function(_, data)
-            print("standard output:", data)
-        end,
-        on_stderr = function(_, data)
-            print("standard error:", data)
-        end,
-
-        on_exit = function(job_id, return_val)
+        on_exit = function(_, return_val)
             if return_val == 0 then
-                print('Scripts executed successfully!')
+                print('File added to xcodeproj')
             else
-                print('Scripts encountered an error.', return_val)
+                print('Error adding file to xcodeproj', return_val)
             end
         end
     }):start()
