@@ -7,6 +7,22 @@ Disclaimer: this tool is in progress while i'm learning objective-c, so i'm addi
 
 PS: this doens't replace xcode at all, it's just for fun and being able to do much of dev stuff only with neovim
 
+
+## Instalation
+
+Lazy
+
+```
+{
+    "thalesgelinger/xcode.nvim",
+    dependencies = {
+        'nvim-lua/plenary.nvim',
+        'stevearc/dressing.nvim'
+    }
+}
+
+```
+
 ## Features
 - Add new file
 - Add asset reference
