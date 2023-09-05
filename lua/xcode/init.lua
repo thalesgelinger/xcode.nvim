@@ -35,10 +35,8 @@ M.add_assets = function()
         local line_end = vend[2]
 
         local files = vim.fn.getline(line_start, line_end)
-        local cwd = vim.fn.expand('%:p')
         for i = 1, #files do
             local file_path = files[i]
-            print(file_path)
             scripts.addAsset(file_path)
         end
     end
@@ -86,7 +84,6 @@ end, {})
 vim.api.nvim_create_user_command('XcodeBuild', function()
     jobs.build:start()
 end, {})
-
 
 
 return M
