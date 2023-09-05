@@ -1,6 +1,7 @@
 local M = {}
 
 local jobs = require 'xcode.jobs'
+local scripts = require 'xcode.scripts'
 
 M.add_class = function()
     vim.ui.input({ prompt = 'Name for new component' }, function(input)
@@ -20,9 +21,31 @@ M.add_class = function()
         h_file:write(h)
         h_file:close()
 
-        jobs.ruby(m_file_path)
+        scripts.addFile(m_file_path)
     end)
 end
+
+M.add_assets = function()
+    if vim.bo.filetype == "netrw" then
+        local vstart = vim.fn.getpos("'<")
+
+        local vend = vim.fn.getpos("'>")
+
+        local line_start = vstart[2]
+        local line_end = vend[2]
+
+        local files = vim.fn.getline(line_start, line_end)
+        local cwd = vim.fn.expand('%:p')
+        for i = 1, #files do
+            local file_path = files[i]
+            print(file_path)
+            scripts.addAsset(file_path)
+        end
+    end
+end
+
+vim.api.nvim_set_keymap('v', '<leader>xf', [[:lua require("xcode").add_assets()<CR>]], { noremap = true, silent = true })
+
 
 local run = function()
     jobs.kill_simulator:after(function()

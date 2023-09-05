@@ -2,27 +2,6 @@ local Job = require 'plenary.job'
 
 local M = {}
 
-
-M.ruby = function(file_name)
-    local scripts = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
-    local ruby_script = scripts .. "add_file.rb"
-
-    Job:new({
-        command = 'ruby',
-        args = {
-            ruby_script,
-            file_name
-        },
-        on_exit = function(_, return_val)
-            if return_val == 0 then
-                print('File added to xcodeproj')
-            else
-                print('Error adding file to xcodeproj', return_val)
-            end
-        end
-    }):start()
-end
-
 M.build = Job:new({
     command = 'xcodebuild',
     args = {
