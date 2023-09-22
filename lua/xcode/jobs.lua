@@ -12,7 +12,7 @@ M.build = Job:new({
         "CODE_SIGN_IDENTITY=\"\"",
         "CODE_SIGNING_REQUIRED=NO",
         "-destination",
-        'platform=iOS Simulator,name=iPhone 14 Pro Max',
+        'platform=iOS Simulator,name=iPhone 15 Pro Max',
         "build"
     },
     on_stdout = function(_, data)
@@ -56,6 +56,13 @@ M.kill_simulator = Job:new({
     end
 })
 
+local function getAppPath()
+    local command =
+    "find ~/Library/Developer/Xcode/DerivedData -name IosPokedexOld.app | tac | grep -m 1 iphonesimulator"
+    local result = vim.fn.systemlist(command)
+    local path = result[#result]
+    return path
+end
 
 M.install_on_simulator = Job:new({
     command = 'xcrun',
@@ -63,7 +70,7 @@ M.install_on_simulator = Job:new({
         "simctl",
         "install",
         "booted",
-        "~/Library/Developer/Xcode/DerivedData/IosPokedexOld-apeihcrsmltruvbquztmxtetvvjt/Build/Products/Debug-iphonesimulator/IosPokedexOld.app"
+        getAppPath()
     },
     on_stdout = function(_, data)
         print("Installing app on simulator: ", data)
@@ -105,5 +112,10 @@ M.run_app = Job:new({
         end
     end
 })
+
+
+-- M.lsp_compiler_commands = ;
+-- xcodebuild clean build -project IosPokedexOld.xcodeproj -scheme IosPokedexOld -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max' COMPILER_INDEX_STORE_ENABLE=NO | xcpretty -r json-compilation-database --output compile_commands.json
+
 
 return M

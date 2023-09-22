@@ -1,7 +1,7 @@
-local M = {}
-
 local jobs = require 'xcode.jobs'
 local scripts = require 'xcode.scripts'
+
+local M = {}
 
 M.add_class = function()
     vim.ui.input({ prompt = 'Name for new component' }, function(input)
@@ -21,6 +21,7 @@ M.add_class = function()
         h_file:write(h)
         h_file:close()
 
+        scripts.addFile(h_file_path)
         scripts.addFile(m_file_path)
     end)
 end

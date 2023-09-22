@@ -1,12 +1,15 @@
 local Job = require 'plenary.job'
+local utils = require 'xcode.utils'
 
 local M = {}
 
 --change this path to project path when changing scripts
 local scripts_path = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
 
+
 M.addFile = function(file_name)
     local ruby_script = scripts_path .. "add_file.rb"
+    local xcode_workspace = utils.find_xcode_workspace()
 
     Job:new({
         command = 'ruby',
@@ -14,6 +17,7 @@ M.addFile = function(file_name)
             ruby_script,
             file_name
         },
+        cwd = xcode_workspace,
         on_exit = function(_, return_val)
             if return_val == 0 then
                 print('File added to xcodeproj')
@@ -24,27 +28,11 @@ M.addFile = function(file_name)
     }):start()
 end
 
-local find_xcode_workspace = function()
-    local current_dir = vim.fn.getcwd()
-
-    repeat
-        local workspace_file = vim.fn.glob(current_dir .. "/*.xcworkspace")
-
-        if workspace_file ~= "" then
-            local workspace_folder = vim.fn.fnamemodify(workspace_file, ":h")
-            return workspace_folder
-        else
-            current_dir = vim.fn.fnamemodify(current_dir, ":h")
-        end
-    until current_dir == "/"
-end
-
-
 M.addAsset = function(asset_name)
     local parent_dir = vim.fn.expand('%')
     local ruby_script = scripts_path .. "add_asset.rb"
 
-    local xcode_workspace = find_xcode_workspace()
+    local xcode_workspace = utils.find_xcode_workspace()
     if xcode_workspace ~= "Xcode workspace not found" then
         print("Xcode workspace folder: " .. xcode_workspace)
     else
