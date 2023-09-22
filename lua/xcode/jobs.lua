@@ -1,14 +1,18 @@
 local Job = require 'plenary.job'
+local utils = require 'xcode.utils'
 
 local M = {}
+
+local project_name = utils.project_name()
+local project_id = utils.project_id()
 
 M.build = Job:new({
     command = 'xcodebuild',
     args = {
         "-workspace",
-        "IosPokedexOld.xcworkspace",
+        project_name .. ".xcworkspace",
         "-scheme",
-        "IosPokedexOld",
+        project_name,
         "CODE_SIGN_IDENTITY=\"\"",
         "CODE_SIGNING_REQUIRED=NO",
         "-destination",
@@ -38,7 +42,7 @@ M.kill_simulator = Job:new({
         "simctl",
         "terminate",
         "booted",
-        "gelinger.IosPokedexOld"
+        project_id
     },
     on_stdout = function(_, data)
         print("Killing current simulator: ", data)
@@ -58,7 +62,7 @@ M.kill_simulator = Job:new({
 
 local function getAppPath()
     local command =
-    "find ~/Library/Developer/Xcode/DerivedData -name IosPokedexOld.app | tac | grep -m 1 iphonesimulator"
+        "find ~/Library/Developer/Xcode/DerivedData -name " .. project_name .. ".app | tac | grep -m 1 iphonesimulator"
     local result = vim.fn.systemlist(command)
     local path = result[#result]
     return path
@@ -95,7 +99,7 @@ M.run_app = Job:new({
         "simctl",
         "launch",
         "booted",
-        "gelinger.IosPokedexOld"
+        project_id
     },
     on_stdout = function(_, data)
         print("Running app on simulator: ", data)
