@@ -5,11 +5,22 @@ local M = {}
 
 --change this path to project path when changing scripts
 local scripts_path = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
+-- local scripts_path = "/Users/tgelin01/Projects/xcode.nvim/lua/xcode/scripts/"
+
+-- Function to append a message to the log file
+local function log(message)
+    local file = io.open(log_file, 'a')
+    if file then
+        file:write(message .. '\n')
+        file:close()
+    end
+end
 
 
 M.addFile = function(file_name)
     local ruby_script = scripts_path .. "add_file.rb"
     local xcode_workspace = utils.find_xcode_workspace()
+    print("WOKSPACE: " .. xcode_workspace);
 
     Job:new({
         command = 'ruby',

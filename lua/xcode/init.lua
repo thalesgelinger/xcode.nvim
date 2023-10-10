@@ -1,9 +1,10 @@
-local jobs = require 'xcode.jobs'
+local jobs    = require 'xcode.jobs'
 local scripts = require 'xcode.scripts'
+local utils   = require 'xcode.utils'
 
-local M = {}
+local M       = {}
 
-M.add_class = function()
+M.add_class   = function()
     vim.ui.input({ prompt = 'Name for new component' }, function(input)
         local file_name = input;
         local t = require('xcode.template')
@@ -21,12 +22,11 @@ M.add_class = function()
         h_file:write(h)
         h_file:close()
 
-        scripts.addFile(h_file_path)
         scripts.addFile(m_file_path)
     end)
 end
 
-M.add_assets = function()
+M.add_assets  = function()
     if vim.bo.filetype == "netrw" then
         local vstart = vim.fn.getpos("'<")
 
@@ -83,8 +83,20 @@ vim.api.nvim_create_user_command('XcodeDev', function()
 end, {})
 
 vim.api.nvim_create_user_command('XcodeBuild', function()
+    print("Building...")
     jobs.build:start()
 end, {})
+
+vim.api.nvim_create_user_command('XcodeAddFile', function()
+    local path = vim.fn.expand("%")
+    scripts.addFile(path)
+end, {})
+
+vim.api.nvim_create_user_command('XcodeLog', function()
+    local log_file = vim.fn.stdpath('data') .. '/logs.txt'
+    vim.cmd(string.format('tabnew %s', log_file))
+end, {})
+
 
 
 return M

@@ -9,31 +9,66 @@ local project_id = utils.project_id()
 M.build = Job:new({
     command = 'xcodebuild',
     args = {
+        "build",
         "-workspace",
         project_name .. ".xcworkspace",
         "-scheme",
         project_name,
         "CODE_SIGN_IDENTITY=\"\"",
         "CODE_SIGNING_REQUIRED=NO",
-        "-destination",
-        'platform=iOS Simulator,name=iPhone 15 Pro Max',
-        "build"
+        "-sdk",
+        "iphonesimulator",
+        "COMPILER_INDEX_STORE_ENABLE=NO",
     },
     on_stdout = function(_, data)
-        print("standard output:", data)
+        print("Xcodebuild log: ", data)
+        utils.log("Xcodebuild log: " .. data)
     end,
     on_stderr = function(_, data)
-        print("standard error:", data)
+        print("Xcodebuild error:", data)
+        utils.log("Xcodebuild error:" .. data)
     end,
 
     on_exit = function(job_id, return_val)
         if return_val == 0 then
-            print('Scripts executed successfully!')
+            print("Xcodebuild executed successfully!")
+            utils.log("Xcodebuild executed successfully!")
         else
-            print('Scripts encountered an error.', return_val)
+            print("Xcodebuild encountered an error: ", return_val)
+            utils.log("Xcodebuild encountered an error: " .. return_val)
         end
     end
 })
+
+-- M.build_lsp_cmds = Job:new({
+--     command = 'xcpretty',
+--     args = {
+--         "-r",
+--         "json-compilation-database",
+--         "--output",
+--         "compile_commands.json"
+--     },
+--
+--     on_stdout = function(_, data)
+--         print("Xcode lsp log: ", data)
+--         utils.log("Xcode lsp log: " .. data)
+--     end,
+--     on_stderr = function(_, data)
+--         print("Xcode lsp error:", data)
+--         utils.log("Xcode lsp error:" .. data)
+--     end,
+--
+--     on_exit = function(job_id, return_val)
+--         if return_val == 0 then
+--             print("Xcode lsp executed successfully!")
+--             utils.log("Xcode lsp executed successfully!")
+--         else
+--             print("Xcode lsp encountered an error: ", return_val)
+--             utils.log("Xcode lsp encountered an error: " .. return_val)
+--         end
+--     end
+-- })
+
 
 
 M.kill_simulator = Job:new({
@@ -46,16 +81,20 @@ M.kill_simulator = Job:new({
     },
     on_stdout = function(_, data)
         print("Killing current simulator: ", data)
+        utils.log("Killing current simulator: " .. data)
     end,
     on_stderr = function(_, data)
         print("Error killing current simulator: ", data)
+        utils.log("Error killing current simulator: " .. data)
     end,
 
     on_exit = function(job_id, return_val)
         if return_val == 0 then
             print('Simulator killed')
+            utils.log('Simulator killed')
         else
             print('Scripts kill_simulator encountered an error.', return_val)
+            utils.log('Scripts kill_simulator encountered an error.' .. return_val)
         end
     end
 })
@@ -78,16 +117,20 @@ M.install_on_simulator = Job:new({
     },
     on_stdout = function(_, data)
         print("Installing app on simulator: ", data)
+        utils.log("Installing app on simulator: " .. data)
     end,
     on_stderr = function(_, data)
         print("Error Installing app on simulator: ", data)
+        utils.log("Error Installing app on simulator: " .. data)
     end,
 
     on_exit = function(job_id, return_val)
         if return_val == 0 then
             print('App Installed on simulator')
+            utils.log('App Installed on simulator')
         else
             print('Scripts install_on_simulator encountered an error.', return_val)
+            utils.log('Scripts install_on_simulator encountered an error.' .. return_val)
         end
     end
 })
@@ -103,23 +146,23 @@ M.run_app = Job:new({
     },
     on_stdout = function(_, data)
         print("Running app on simulator: ", data)
+        utils.log("Running app on simulator: " .. data)
     end,
     on_stderr = function(_, data)
         print("Error Running app on simulator: ", data)
+        utils.log("Error Running app on simulator: " .. data)
     end,
 
     on_exit = function(job_id, return_val)
         if return_val == 0 then
             print('App Launched on simulator')
+            utils.log('App Launched on simulator')
         else
             print('Scripts run_app encountered an error.', return_val)
+            utils.log('Scripts run_app encountered an error.' .. return_val)
         end
     end
 })
-
-
--- M.lsp_compiler_commands = ;
--- xcodebuild clean build -project IosPokedexOld.xcodeproj -scheme IosPokedexOld -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 15 Pro Max' COMPILER_INDEX_STORE_ENABLE=NO | xcpretty -r json-compilation-database --output compile_commands.json
 
 
 return M

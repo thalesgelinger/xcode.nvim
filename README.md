@@ -23,6 +23,15 @@ Lazy
 
 ```
 
+## Disclaimer
+
+To make the obj libraries be recognized with lsp, we need to run a command, i'm trying to add it automaticaly to this plugin, but for now you need to run this command
+
+
+```
+ xcodebuild clean build -workspace MyProject.xcworkspace -scheme MyProject CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO -sdk iphonesimulator COMPILER_INDEX_STORE_ENABLE=NO | xcpretty -r json-compilation-database --output compile_commands.json
+```
+
 ## Features
 - Add new file
 - Add asset reference

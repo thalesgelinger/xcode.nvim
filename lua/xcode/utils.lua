@@ -40,19 +40,33 @@ M.project_name = function()
             current_dir = vim.fn.fnamemodify(current_dir, ":h")
         end
     until current_dir == "/"
+    return ''
 end
 
 M.project_id = function()
-    local pbxproj_list = vim.fn.systemlist("find ./" .. M.project_name() .. ".xcodeproj | grep .pbxproj");
-    local pbxproj = pbxproj_list[#pbxproj_list]
+    local project_name = M.project_name()
+    if project_name then
+        local pbxproj_list = vim.fn.systemlist("find ./" .. project_name .. ".xcodeproj | grep .pbxproj");
 
-    local command = "cat " ..
-        pbxproj .. " | grep -m 1 PRODUCT_BUNDLE_IDENTIFIER | grep -o '=.*;' | awk -F= '{print $2}' | tr -d ' ;'"
+        local pbxproj = pbxproj_list[#pbxproj_list]
 
-    local result = vim.fn.systemlist(command)
-    local project_id = result[#result]
-    print(project_id)
-    return project_id
+        local command = "cat " ..
+            pbxproj .. " | grep -m 1 PRODUCT_BUNDLE_IDENTIFIER | grep -o '=.*;' | awk -F= '{print $2}' | tr -d ' ;'"
+
+        local result = vim.fn.systemlist(command)
+        local project_id = result[#result]
+        print(project_id)
+        return project_id
+    end
+end
+
+M.log = function(message)
+    local log_file = vim.fn.stdpath('data') .. '/logs.txt'
+    local file = io.open(log_file, 'a')
+    if file then
+        file:write(message .. '\n')
+        file:close()
+    end
 end
 
 return M
