@@ -4,8 +4,8 @@ local utils = require 'xcode.utils'
 local M = {}
 
 --change this path to project path when changing scripts
-local scripts_path = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
--- local scripts_path = "/Users/tgelin01/Projects/xcode.nvim/lua/xcode/scripts/"
+-- local scripts_path = vim.fn.stdpath('data') .. "/lazy/xcode.nvim/lua/xcode/scripts/"
+local scripts_path = "/Users/tgelin01/Projects/xcode.nvim/lua/xcode/scripts/"
 
 -- Function to append a message to the log file
 local function log(message)
@@ -56,6 +56,7 @@ M.addAsset = function(asset_name)
         args = {
             ruby_script,
             parent_dir .. "/" .. asset_name,
+            "./" .. utils.project_name() .. ".xcworkspace"
         },
         cwd = xcode_workspace,
         on_stdout = function(_, data)

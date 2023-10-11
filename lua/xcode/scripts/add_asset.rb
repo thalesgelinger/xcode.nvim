@@ -4,7 +4,7 @@ require 'pathname'
 puts Dir.pwd()
 
 # Path to your Xcode workspace file
-workspace_path = './IosPokedexOld.xcworkspace'
+workspace_path = ARGV[1]
 puts workspace_path
 
 # Path to your SVG file

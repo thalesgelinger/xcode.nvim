@@ -27,26 +27,14 @@ M.add_class   = function()
 end
 
 M.add_assets  = function()
+    print("ADD ASSETS")
     if vim.bo.filetype == "netrw" then
-        local vstart = vim.fn.getpos("'<")
-
-        local vend = vim.fn.getpos("'>")
-
-        local line_start = vstart[2]
-        local line_end = vend[2]
-
-        local files = vim.fn.getline(line_start, line_end)
-        for i = 1, #files do
-            local file_path = files[i]
-            scripts.addAsset(file_path)
-        end
+        local file = vim.fn.expand("<cfile>");
+        scripts.addAsset(file)
     end
 end
 
-vim.api.nvim_set_keymap('v', '<leader>xf', [[:lua require("xcode").add_assets()<CR>]], { noremap = true, silent = true })
-
-
-local run = function()
+local run     = function()
     jobs.kill_simulator:after(function()
         jobs.build:after(function()
             jobs.install_on_simulator:after(function()
@@ -59,7 +47,7 @@ local run = function()
     jobs.kill_simulator:start()
 end
 
-local runDev = false;
+local runDev  = false;
 
 vim.api.nvim_create_autocmd("BufWritePost", {
     group = vim.api.nvim_create_augroup("Xcode", { clear = true }),

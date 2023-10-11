@@ -9,6 +9,7 @@ local project_id = utils.project_id()
 M.build = Job:new({
     command = 'xcodebuild',
     args = {
+        "clean",
         "build",
         "-workspace",
         project_name .. ".xcworkspace",
@@ -108,6 +109,7 @@ local function getAppPath()
 end
 
 M.install_on_simulator = Job:new({
+    --xcrun simctl install booted
     command = 'xcrun',
     args = {
         "simctl",
